@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+<script src="https://use.fontawesome.com/2605df8b93.js"></script>
+<link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
+  </head>
+  
+  <style>
+  body {
+  font-family: Helvetica Neue, Helvetica, Arimo, Liberation Sans, Lucida Grande, sans-serif;
+  background: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQ59aD34kr-YFvi0AiS0CDQayO81GKavRxgfN-PlZZgG78otfN") no-repeat center center fixed;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: Times, Georgia, Linux Libertine, Cambria, serif;
+}
+
+h4 a,
+.list-inline li a {
+  color: white !important;
+  text-decoration: underline !important;
+}
+
+a:hover,
+a:visited,
+a:active,
+a:link {
+  text-decoration: none;
+  color: #333;
+}
+
+.pageTitle,
+.titleNote {
+  background-color: rgba(12, 33, 38, 0.5);
+  color: white;
+}
+
+.search_box,
+.searchSubmit,
+#randomPage {
+  height: 4rem;
+  min-height: 1.2em;
+  line-height: 1.6rem;
+  verticle-align: middle;
+  display: inline-block;
+  margin: 2.2rem auto 1.5em;
+  padding: .5rem 1rem;
+}
+
+.search_box {
+  font-size: 2rem;
+  width: 700px;
+  background: #fff;
+  border: .5px solid #ccc;
+  box-shadow: inset 0 0 0 .1em #ccc;
+  border-radius: .1em;
+}
+
+.searchSubmit,
+#randomPage {
+  font-weight: 70;
+  color: #fff;
+  cursor: pointer;
+  background-color: #165c91;
+  border: 1px solid #165c91;
+  text-align: center;
+}
+
+#randomPage a {
+  color: #fff;
+}
+/* RESULTS */
+
+.resultDisplay {
+  
+}
+
+.results {
+  font-size: 2rem;
+  max-width: 800px;
+  background: #fff;
+  border: .5px solid #ccc;
+  box-shadow: inset 0 0 0 .1em #ccc;
+  border-radius: .1em;
+  padding: 1rem;
+  margin: .2rem;
+}
+
+
+.extract {
+  font-size: 12px;
+}
+
+
+/* Sticky Footer
+http://ryanfait.com/resources/footer-stick-to-bottom-of-page/ */
+
+* {
+  margin: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+.wrapper {
+  min-height: 100%; 
+  height: auto !important; /*Cause footer to stick to bottom in IE 6*/
+  height: 100%; 
+  margin: 0 auto -4em; /*Allow for footer height*/
+
+}
+
+.footer,
+.push {
+  clear: both;
+}
+
+.footer {
+  min-height: 4em;
+  background-color: rgba(12, 33, 38, 0.5);
+}
+
+.footer-menu-divider,
+.copyright {
+  color: white;
+}
+</style>
+
+<body>
+  <div class="container-fluid wrapper">
+  <div class="row pageTitle">
+    <div class="col-md-4 col-md-offset-4 title text-center">
+      <h1>Cypriano's Wikipedia Viewer</h1>
+    </div>
+  </div>
+  <div class="row titleNote">
+    <div class="col-md-6 col-md-offset-3 note text-center">
+      <h4>Search <a href="https://www.wikipedia.org/" target="_blank">Wikipedia</a></h4>
+    </div>
+  </div>
+  <div class="row form-group">
+    <div class="col-md-8 col-md-offset-2  text-center">
+      <input type="text" class="search_box" id="input" placeholder="Search Wikipedia">
+      <button type="submit" class="btn btn-default searchSubmit" id="searchSubmit">
+        <i class="fa fa-search" aria-hidden="true"></i>
+      </button>
+      <button type="submit" class="btn btn-default" id="randomPage"><a href="https://en.wikipedia.org/wiki/Special:Random" target="_blank">
+        Feelin' Lucky?</a>
+      </button>
+      
+ <!--     <button type="submit" class="butn btn-default random" id="randomSearch">
+        Random <i class="fa fa-search" aria-hidden="true"></i>
+      </button> -->
+      
+    </div>
+  </div>
+  <div id="display-result" class="col-md-6 col-md-offset-3 ">
+  </div>
+  <div class="push"></div>
+</div>
+<!-- end container-fluid -->
+<!-- FOOTER -->
+<div class="footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <ul class="list-inline">
+          <li>
+            <a href="https://www.freecodecamp.com" target="_blank">Free Code Camp</a>
+          </li>
+          <li class="footer-menu-divider">&sdot;</li>
+          <li>
+            <a href="https://www.freecodecamp.com/challenges/build-a-wikipedia-viewer" target="_blank">Challenge: Build a Wikipedia Viewer</a>
+          </li>
+          <li class="footer-menu-divider">&sdot;</li>
+          <li>
+            <a href="https://codepen.io/cykins4good/pen/GvwoMP" target="_blank"> Cypriano Akinwunmi</a>
+          </li>
+        </ul>
+        <p class="copyright small">Cypriano Akinwunmi &copy; 2017. All Rights Reserved</p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+
+<script>
+/* http://stackoverflow.com/questions/36985111/using-wikipedias-api-to-fetch-results-from-search-query */
+var apiURL = "https://en.wikipedia.org/w/api.php?callback=?";
+
+$(document).ready(function() {
+  $('#searchSubmit').click(function() {
+    $("#display-result").empty(); // clear prior search results 
+    $.getJSON(apiURL, {
+        action: 'query',
+        format: 'json',
+        inprop: "url",
+        formatversion: 2,
+        generator: 'search',
+        gsrsearch: $("input").val(),
+        gsrwhat: "text",
+        prop: 'extracts|info',
+        exsentences: 3,
+        exintro: "",
+        explaintext: "",        
+        exlimit: 20,
+      })
+      .success(function(response) {
+        console.log(response);
+        response.query.pages.forEach(function(resp) {
+          $('#display-result').append(
+            "<a href='" + resp.fullurl + "' target= '_blank'><div id='result' class='results'><h3>" + resp.title + "</h3><p = class='extract'>" + resp.extract + "</p></div>");
+        })
+      });
+  }); // search
+  
+  $('#randomPage').click(function() {
+    
+  }); // randomPage
+  
+/*  $('#randomSearch').click(function() {
+    $("#display-result").empty(); // clear prior search results 
+    $("input").val("");
+    $.getJSON(apiURL, {
+        action: 'query',
+        format: 'json',
+        inprop: "url",
+        formatversion: 2,
+        generator: 'random',
+        grnlimit: 10,
+        grnnamespace: 0,
+        prop: 'extracts|info',
+        exintro: "",
+        
+      })
+      .success(function(response) {
+        console.log(response);        
+        response.query.pages.forEach(function(resp) {
+            $('#display-result').append(
+              "<div id='result' class='results'><h3><a href='" + resp.fullurl + "' target= '_blank'>" + resp.title + "</p></div>");       
+        })
+      });
+    });
+*/
+  
+  // trigger submit on use of enter key
+  $("#input").keyup(function(event) {
+    if (event.keyCode == 13) {
+      $("#searchSubmit").click();
+    }
+  });
+});
+
+/*
+// display results
+function processResult(apiResult) {
+  console.log(apiResult);
+  for (var i = 0; i < apiResult.query.search.length; i++) {
+    $('#display-result').append(
+      
+      "<div id='result' class='col-md-8 col-md-2-offset results'><p >" + apiResult.query.search[i].title + "</p><p = class='snippet'>" + apiResult.query.search[i].snippet + "</p></div>"
+);
+  }
+};
+*/
+</script>
+</html>
